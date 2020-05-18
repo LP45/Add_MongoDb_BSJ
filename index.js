@@ -55,7 +55,7 @@ app.get('/jobs', (req, res) => {
         }
 
         else {
-            res.render("jobs", {
+            res.redirect("jobs", {
             // 
             'all_companies' : result,
             
