@@ -68,6 +68,24 @@ app.get('/jobs', (req, res) => {
 
 });
     
+
+
+
+app.get('/view/:company_id',(req,res) =>{
+    const parameters = req.params
+    const company_id = parameters[]
+    db_handler.collection('companies').find({key: value}).toArray( function (err, result) {
+        if (err) {
+            console.log(err)
+        }
+
+        else {
+            res.redirect("company_id", {
+            // 
+            'all_companies' : result,
+            
+        });
+})
     
     // const all_companies = [];
     // res.render('jobs', {

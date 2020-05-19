@@ -10,7 +10,7 @@
     
     This is where you will display list of each company name eventually.
    <% all_companies.forEach( (single_character) => { %>
-    <%= single_character.name %>
+    <a href="/view/COMPANY_ID<%= single_character.name %>"></a> <%= single_character.name %>
     <br><br>
     <% }) %>
 
