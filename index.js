@@ -21,15 +21,13 @@ const DB_name = "bsj";
 app.listen(PORT, () => {
     console.log(`Server Sta\rted on Port: ${PORT}`);
 
-    
-
-    mongoClient.connect(URL,(err,db)=> {
+    mongoClient.connect(URL,(err,db_client)=> {
         if (err) {
             console.log("Error" + err)
         }
         else{
             console.log("Connected to the database!" )
-            db_handler =  db.db(DB_name)
+            db_handler =  db_client.db(DB_name)
         }
     });
     // Step 4.
@@ -55,43 +53,61 @@ app.get('/jobs', (req, res) => {
         }
 
         else {
-            res.redirect("jobs", {
-            // 
-            'all_companies' : result,
-            
-        });
-    }console.log(all_companies)
+            res.render("jobs",{
+                "all_companies":result
+            } )
+        
+    } //console.log(all_companies)
     
     });
 
 
 
 });
+
+
     
 
 
 
 app.get('/view/:company_id',(req,res) =>{
     const parameters = req.params
-    const company_id = parameters[]
-    db_handler.collection('companies').find({key: value}).toArray( function (err, result) {
+    console.log(parameters)
+    const companyid = parameters['company_id']
+    db_handler.collection('companies').find({company_id:companyid}).toArray( function (err, result) {
         if (err) {
             console.log(err)
         }
 
         else {
-            res.redirect("company_id", {
-            // 
-            'all_companies' : result,
+            res.render("company", {
+            "single_company" : result[0],
             
-        });
-})
-    
-    // const all_companies = [];
-    // res.render('jobs', {
-    //     all_companies:all_companies
-    // });
+            });
+        
+        }
+        console.log(result[0])
+        
+    }); 
+});
 
+
+app.get('/updateCompany/:company_id',function (req,res) {
+    const parameters = req.params;  // bundle things up
+    const companyid = parameters['company_id'];
+    db_handler.collection('companies').updateOne({company_id:companyid},{$set:{is_hiring:"yes"}},function (err,result) 
+    {
+        if(err) {
+            console.log("Cannot Update Fields");
+        }      
+
+        else{
+           res.redirect( "/view/" + companyid);
+        }    
+
+});
+
+});
 
 app.post('/add', (req, res) => {
     // This is where you will get a POST request on the '/add' route. 
@@ -99,7 +115,7 @@ app.post('/add', (req, res) => {
     
     const company_data = req.body;
     const company_id = company_data['company_id'];
-    const company_name = company_data['name'];
+    const company_name = company_data['companyname'];
     const company_des = company_data['description'];
     const company_logo = company_data['logo']; 
     
@@ -108,6 +124,7 @@ app.post('/add', (req, res) => {
         companyname:company_name,
         description: company_des,
         logo: company_logo,
+        
     } 
     db_handler.collection('companies').insertOne(myobj, (err, result) =>{
                 if (err) {
@@ -123,15 +140,3 @@ app.post('/add', (req, res) => {
     
     
 });
-
-mongoClient.connect(URL,(err,db) =>{
-    if (err) {
-        console.log("error" + err);
-    }
-    else{
-        console.log("You've connected to the database");
-        const db_handler = db.db(DB_name)
-    }
-});
-
-
